@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>Active User : <span id="client_count">0</span></h1>
+    <form id="message-form">
+        <input type="text" id="username" id="username" placeholder="Username">
+        <input type="text" id="message" id="message" placeholder="Message">
+        <input type="submit" value="submit">
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('/');        
+        socket.on('live_user',(data) => {               
+            let countspan = document.getElementById('client_count');
+            countspan.innerHTML = data.clientsCount;
+        });
+
+        // send to the server that user is active, this is also one way to inform to the server
+        // socket.emit('live_user');
+
+        // submit form emit message
+        document.getElementById('message-form').addEventListener('submit',(e) => {
+            e.preventDefault();
+            let msgField = document.getElementById('message');
+            let userField = document.getElementById('username');
+            // emit value
+            if(msgField.value && userField.value){
+                socket.emit('send_message',{username:userField.value,message:msgField.value});
+                userField.disabled = true;
+                msgField.value = '';                
+            }else{ // validation of textfield
+                let span = document.createElement('span');
+                span.id = 'error-message';
+                span.innerHTML = 'Please enter your username or message<br/>';
+                if(document.getElementById(span.id) === null){
+                    document.getElementById('message-form').prepend(span);
+                }
+            }
+        });
+
+        //if user emit message, display user message on page
+        socket.on('send_message',(data) => {             
+            let div = document.createElement('div');
+            div.innerHTML = `${data.username} says <b>${data.message}</b>`;
+            document.body.append(div);
+        });        
+    </script>
+</body>
+</html>
