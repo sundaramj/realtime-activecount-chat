@@ -1,7 +1,7 @@
-# Real time active user count & simple chat message using Node js used Express & socket.io npm package
+# Real time active user count and simple chat message using Node js, used Express and Socket.io NPM package
 Code written in very simple code, Hope you will understand it easily
 
-### Please install NPM package before running application
+### Install NPM package before running application
 > npm i express <br/>
 > npm i socket.io
 
